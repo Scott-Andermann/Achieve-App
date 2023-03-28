@@ -2,14 +2,16 @@ import React, { useState, Dispatch, SetStateAction } from 'react';
 import { Modal, View, Text } from 'react-native'
 import GradientButton from '../components/GradientButton';
 import LoginInput from '../components/LoginInput';
-import { useAppDispatch } from '../redux/hooks';
+import { save } from '../components/SecureStorageFunctions';
+import { useAppDispatch, useAppSelector } from '../redux/hooks';
 import { login } from '../redux/slicers/loginSlice';
-import { setLocationState, setName } from '../redux/slicers/userInfoSlice';
+import { setLocationState, setName, setUserId } from '../redux/slicers/userInfoSlice';
 
 
-const ProfileModal = ({exposeModal, setExposeModal, navigation}: {exposeModal: boolean, setExposeModal: Dispatch<SetStateAction<boolean>>, navigation: any}) => {
+const ProfileModal = ({exposeModal, setExposeModal}: {exposeModal: boolean, setExposeModal: Dispatch<SetStateAction<boolean>>}) => {
 
     const dispatch = useAppDispatch();
+    let body = useAppSelector((state) => state.userInfo)
 
     const [firstName, setFirstName] = useState<string>('');
     const [lastName, setLastName] = useState<string>('');
@@ -17,17 +19,30 @@ const ProfileModal = ({exposeModal, setExposeModal, navigation}: {exposeModal: b
     const [showError, setShowError] = useState<boolean>(false);
 
     const handleSignUp = async () => {
-        console.log(firstName, lastName, location);
+        // console.log(firstName, lastName, location);
         if (firstName && lastName) {
             if (location) {
                 dispatch(setLocationState({location: location}))
             }
             dispatch(setName({firstName: firstName, lastName: lastName}))
             // send registration info to server and get key back
-            dispatch(login('userIdString'))
-            setExposeModal(false);
-            navigation.navigate('Login')
             
+            body = {...body, firstName: firstName, lastName: lastName, location: location}
+            
+            const response = await fetch('http://localhost:5000/signup', {method: 'POST', headers: {'Content-Type': 'application/json'}, body: JSON.stringify(body)})
+            const result = await response.json();
+            // console.log(result);
+            if (result.status === 'failed') {
+                setExposeModal(false);
+                alert(result.error);
+                // setError(result.error);
+            }
+            else {
+                save({key: 'userId', value: result.userId})
+                dispatch(setUserId({userId: result.userId}))
+                dispatch(login(result.userId))
+                setExposeModal(false);
+            }
         } else {
             setShowError(true)
         }

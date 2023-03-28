@@ -2,7 +2,7 @@ import { createSlice } from '@reduxjs/toolkit'
 import type { PayloadAction } from '@reduxjs/toolkit'
 
 export interface UserInfoState {
-    userID: string,
+    userId: string,
     email: string,
     firstName: string,
     lastName: string,
@@ -24,8 +24,12 @@ interface LocationState {
     location: string,
 }
 
+interface UserIdState {
+    userId: string,
+}
+
 const initialState: UserInfoState = {
-    userID: '',
+    userId: '',
     email: '',
     firstName: '',
     lastName: '',
@@ -53,19 +57,22 @@ export const userInfoSlicer = createSlice({
         setLocationState: (state, action: PayloadAction<LocationState>) => {
             state.location = action.payload.location
         },
+        setUserId: (state, action: PayloadAction<UserIdState>) => {
+            state.userId = action.payload.userId
+        },
         setUserInfo: (state, action: PayloadAction<UserInfoState>) => {
-            state.userID = action.payload.userID;
+            state.userId = action.payload.userId;
             state.email = action.payload.email;
             state.firstName = action.payload.firstName;
             state.lastName = action.payload.lastName;
-            state.email = action.payload.email;
             state.password = action.payload.password;
+            state.location = action.payload.location;
         },
         clearPassword: (state) => {
             state.password = '';
         },
         clearUserInfo: (state, action: PayloadAction<ResetState>) => {
-            state.userID = '';
+            state.userId = '';
             state.email = '';
             state.firstName = '';
             state.lastName = '';
@@ -77,6 +84,6 @@ export const userInfoSlicer = createSlice({
 })
 
 // Action creators are generated for each case reducer function
-export const { setUserInfo, clearUserInfo, setCredentials, setLocationState, setName } = userInfoSlicer.actions
+export const { setUserInfo, clearUserInfo, setCredentials, setLocationState, setName, setUserId } = userInfoSlicer.actions
 
 export default userInfoSlicer.reducer

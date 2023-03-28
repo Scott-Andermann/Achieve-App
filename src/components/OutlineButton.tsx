@@ -15,17 +15,18 @@ const OutlineButton = ({ text, onPress }: { text: string, onPress: asyncVoidFunc
 
 const styles = StyleSheet.create({
     loginButton: {
-        width: screenWidth * 0.7,
+        width: '100%',
         display: 'flex',
         alignItems: 'center',
         justifyContent: 'center',
         height: 50,
         borderRadius: 25,
         overflow: 'hidden',
-        margin: 6,
         backgroundColor: 'transparent',
         borderColor: 'gray',
         borderWidth: 2,
+        marginTop: 6,
+        marginBottom: 6,
     },
     loginButtonText: {
         color: 'white',

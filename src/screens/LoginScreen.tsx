@@ -6,6 +6,8 @@ import { login, logout } from '../redux/slicers/loginSlice';
 import LoginInput from '../components/LoginInput';
 import GradientButton from '../components/GradientButton';
 import OutlineButton from '../components/OutlineButton';
+import { sha256 } from 'js-sha256';
+import { setUserInfo } from '../redux/slicers/userInfoSlice';
 
 const screenHeight = Dimensions.get('window').height;
 const screenWidth = Dimensions.get('window').width;
@@ -18,17 +20,29 @@ const LoginScreen = ({ navigation }: { navigation: any }) => {
 
     const dispatch = useAppDispatch();
 
-    const handleOnPress = async () => {
-        let result = await save({ key: 'key', value: password })
-        if (result === null) {
+    const loginToApp = async () => {
+        const body = {email: email, password: sha256(password), userId: ''}
+        const response = await fetch('http://localhost:5000/login', {method: 'POST', headers: {'Content-Type': 'application/json'}, body: JSON.stringify(body)})
+        const result = await response.json();
+        // console.log(result);
+        if (result.status === 'failed') {
+            alert(result.message)
+            return
+        }
+        let storeResult = await save({key: 'userId', value: result.userId})
+        if (storeResult === null) {
             alert('error')
         } else {
-            dispatch(login(password))
+            dispatch(login(result.userId))
+            dispatch(setUserInfo({
+                userId: result['userId'],
+                email: result['email'],
+                firstName: result['firstName'],
+                lastName: result['lastName'],
+                password: result['password'],
+                location: result['location']
+            }))
         }
-    }
-
-    const loginFunc = async () => {
-        await handleOnPress()
     }
 
     return (
@@ -45,7 +59,7 @@ const LoginScreen = ({ navigation }: { navigation: any }) => {
                             <Text style={styles.recoverLink}>Forgot Password?</Text>
                         </TouchableOpacity>
                     </View>
-                    <GradientButton text='Log In' onPress={loginFunc} />
+                    <GradientButton text='Log In' onPress={loginToApp} />
                     <OutlineButton text='Register' onPress={() => navigation.navigate('Register')} />
                 </View>
             </View>

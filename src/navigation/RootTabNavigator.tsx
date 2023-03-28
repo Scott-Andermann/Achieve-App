@@ -18,7 +18,7 @@ const Tab = createBottomTabNavigator<RootTabParamList>();
 export const RootTabNavigator = () => {
     return (
         <Tab.Navigator>
-            <Tab.Screen name="Home" component={HomeScreen} />
+            <Tab.Screen name="Home" options={{headerShown: false}} component={HomeScreen} />
             <Tab.Screen name="Create" component={HomeScreen} />
             <Tab.Screen name="Find" component={HomeScreen} />
             <Tab.Screen name="Profile" component={HomeScreen} />

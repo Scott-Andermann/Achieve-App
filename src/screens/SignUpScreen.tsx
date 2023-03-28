@@ -6,6 +6,8 @@ import OutlineButton from '../components/OutlineButton';
 import ProfileModal from '../Modal/ProfileModal';
 import { useAppDispatch } from '../redux/hooks';
 import { setCredentials } from '../redux/slicers/userInfoSlice';
+import {sha256} from 'js-sha256';
+import { validateEmail, validatePassword } from '../components/ValidationFunctions';
 
 const screenHeight = Dimensions.get('window').height;
 const screenWidth = Dimensions.get('window').width;
@@ -22,8 +24,18 @@ const SignUpScreen = ({ navigation }: { navigation: any }) => {
 
     const validateAndSignup = () => {
         console.log('validate: ', email, password);
+        const emailError = validateEmail(email);
+        const passwordError = validatePassword(password);
+        if (emailError) {
+            alert('Please enter a valid email address')
+            return;
+        } else if (passwordError) {
+            alert('Please enter a password of at least 8 characters including at least one capital letter, one number, and one symbol.')
+            return;
+        }
+        
         // add email and pw to redux userinfo
-        dispatch(setCredentials({email: email, password: password}))
+        dispatch(setCredentials({email: email, password: sha256(password)}))
         setProfileModal(true);
     }
 
