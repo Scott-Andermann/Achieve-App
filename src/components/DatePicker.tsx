@@ -18,6 +18,9 @@ const DatePicker = ({date, setDate}: {date: Date, setDate: Dispatch<SetStateActi
         setShow(true);
     };
 
+    var d = new Date(Date.now());
+    d.setDate(d.getDate() - 12);
+
     return (
         <TouchableOpacity style={styles.inputWrapper} onPress={showDatepicker}>
             {/* <Button onPress={showDatepicker} title="Show date picker!" /> */}
@@ -32,6 +35,7 @@ const DatePicker = ({date, setDate}: {date: Date, setDate: Dispatch<SetStateActi
                     is24Hour={true}
                     onChange={(e, date) => date && onChange(e, date)}
                     maximumDate={new Date(Date.now())}
+                    minimumDate={d}
                     style={{ width: 320, backgroundColor: 'white' }}
                 />
             )}

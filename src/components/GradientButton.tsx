@@ -6,11 +6,13 @@ const screenWidth = Dimensions.get('window').width;
 type asyncVoidFunc = () => Promise<void>;
 type voidFunc = () => void;
 
-const GradientButton = ({ text, onPress }: { text: string, onPress: asyncVoidFunc | voidFunc }) => {
+const GradientButton = ({ text, onPress, children }: { text: string, onPress: asyncVoidFunc | voidFunc, children?: React.ReactNode }) => {
     return (
         <TouchableOpacity style={[styles.loginButton, styles.shadowProp]} onPress={onPress}>
             <LinearGradient start={{ x: 0, y: 0 }} end={{ x: 1, y: 0 }} colors={['#9e6bf6', '#7dfad9']} style={[styles.gradient, styles.shadowProp]}>
+                {children ? children : 
                 <Text style={styles.loginButtonText}>{text}</Text>
+                }
             </LinearGradient>
         </TouchableOpacity>
     );

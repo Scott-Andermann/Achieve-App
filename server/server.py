@@ -2,8 +2,9 @@ from flask import Flask, request
 from flask_cors import cross_origin
 import json
 from nanoid import generate
-from db_functions import add_user, check_login, db_add_activity
+from db_functions import add_user, check_login, db_add_activity, db_points_in_last_week, db_connect
 from datetime import datetime
+
 
 app = Flask(__name__)
 
@@ -47,6 +48,7 @@ def signup():
 @app.route('/login', methods=['POST'])
 @cross_origin()
 def login():
+    print('LOGGING IN')
     if request.method == 'POST':
         data = json.loads(request.data)
         print(data)
@@ -57,7 +59,7 @@ def login():
         print(response)
         return response
     
-    return 'POST request required', 400
+    # return 'POST request required', 400
     # response_body = 
     # return response_body
 
@@ -67,21 +69,31 @@ def add_activity():
     if request.method == 'POST':
         data = json.loads(request.data)
         # print(data)
-        date = datetime.strptime(data['date'], '%m/%d/%Y').date()
+        activityDate = datetime.strptime(data['date'], '%m/%d/%Y').date()
         description = data['description']
         group = data['group']
         name = data['name']
         userId = data['userId']
-        response = db_add_activity(userId, name, date, group, description)
-        print(response)
-        if response == 'success':
-            response_body = {
-                "status": "success",
-            }
-        else:
-            response_body = {
-                "status": "failed",
-                "message": response
-            }
+        response = db_add_activity(userId, name, activityDate, group, description)
+        # print(response)
+        # if response['status'] == 'success':
+        #     response_body = {
+        #         "status": "success",
+        #         "message": response['message']
+        #     }
+        # else:
+        #     response_body = {
+        #         "status": "failed",
+        #         "message": response['message']
+        #     }
     
-    return response_body
+        return response
+    
+@app.route('/leaderboard')
+@cross_origin()
+def leaderboard():
+    response_data = db_points_in_last_week()
+    return {
+        "status": "ok",
+        "data": response_data
+    }

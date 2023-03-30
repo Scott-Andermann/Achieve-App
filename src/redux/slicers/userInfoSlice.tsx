@@ -8,6 +8,8 @@ export interface UserInfoState {
     lastName: string,
     password: string,
     location: string,
+    streak: number,
+    points: number,
 }
 
 interface UserCredentialsState {
@@ -35,11 +37,8 @@ const initialState: UserInfoState = {
     lastName: '',
     password: '',
     location: '',
-}
-
-interface ResetState {
-    offset: number,
-    startingFlow: number
+    streak: 0,
+    points: 0,
 }
 
 export const userInfoSlicer = createSlice({
@@ -71,19 +70,11 @@ export const userInfoSlicer = createSlice({
         clearPassword: (state) => {
             state.password = '';
         },
-        clearUserInfo: (state, action: PayloadAction<ResetState>) => {
-            state.userId = '';
-            state.email = '';
-            state.firstName = '';
-            state.lastName = '';
-            state.location = '';
-            state.password = '';
-        },
         
     },
 })
 
 // Action creators are generated for each case reducer function
-export const { setUserInfo, clearUserInfo, setCredentials, setLocationState, setName, setUserId } = userInfoSlicer.actions
+export const { setUserInfo, setCredentials, setLocationState, setName, setUserId } = userInfoSlicer.actions
 
 export default userInfoSlicer.reducer

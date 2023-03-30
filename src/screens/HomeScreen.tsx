@@ -8,18 +8,18 @@ import FoundationIcons from 'react-native-vector-icons/Foundation';
 import GradientButton from '../components/GradientButton';
 import NewAchievementModal from '../Modal/NewAchievementModal';
 import DatePicker from '../components/DatePicker';
+import Leaderboard from '../components/Leaderboard';
+import StreakIndicator from '../components/StreakIndicator';
 
 const screenHeight = Dimensions.get('window').height
 
 const HomeScreen = () => {
-    const dispatch = useAppDispatch();
     const userInfo = useAppSelector(state => state.userInfo);
 
     const [exposeModal, setExposeModal] = useState<boolean>(false);
 
     const handleOnPress = () => {
-        save({key: 'userId', value: ''});
-        dispatch(logout());    
+
     }
 
     return ( 
@@ -33,7 +33,7 @@ const HomeScreen = () => {
                     </View>
                     <View style={styles.welcomeWrapper}>
                         <Text style={styles.welcomeText}>Welcome,</Text>
-                        <Text style={[styles.welcomeText, { fontSize: 40, fontWeight: 'bold' }]}>{'Scott'}</Text>
+                        <Text style={[styles.welcomeText, { fontSize: 40, fontWeight: 'bold' }]}>{userInfo.firstName}</Text>
                     </View>
                     <View style={[styles.headshot, styles.shadowProp]}>
                         <MaterialIcons name='image-search' size={80} color='#8F8F8F' />
@@ -42,12 +42,12 @@ const HomeScreen = () => {
                 <View style={styles.spacer} />
                 <View style={styles.contentWrapper} >
                     <View style={styles.contentWide}>
-                        <GradientButton text={'Add achievement'} onPress={() => setExposeModal(true)}
-                        />
-                        <GradientButton text={'Logout'} onPress={handleOnPress} />
+                        {/* Streak indicator */}
+                        <StreakIndicator streak={8}/>
                     </View>
                         <View style={styles.contentCardContainer}>
-                            
+                        <GradientButton text={'Add achievement'} onPress={() => setExposeModal(true)}
+                        />
                             {/* <FlatList data={data} renderItem={(item) => <HomeCard />} /> */}
                             {/* <HomeCard />
                             <HomeCard />
@@ -129,7 +129,6 @@ const styles = StyleSheet.create({
     contentCardContainer: {
         marginTop: 10,
         display: 'flex',
-        flex: 2,
         flexDirection: 'row',
         flexWrap: 'wrap',
         justifyContent: 'center'
