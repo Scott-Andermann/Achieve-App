@@ -44,18 +44,29 @@ export const LoginStackNavigator = () => {
             return result
         }
 
+        const getStreak = async (userId: string) => {
+            const response = await fetch(`http://localhost:5000/current_stats?userId=${userId}`)
+            const result = await response.json()
+            // console.log(result);
+            return result
+        }
+
         const getUserToken = async () => {
             const userId = await getValueFor('userId');
             const result = await autoLogin(userId);
             if (result['status'] === 'success') {
                 dispatch(login(userId));
+                const stats = await getStreak(userId);
+                
                 dispatch(setUserInfo({
                     userId: result['userId'],
                     email: result['email'],
                     firstName: result['firstName'],
                     lastName: result['lastName'],
                     password: result['password'],
-                    location: result['location']
+                    location: result['location'],
+                    points: stats['totalPoints'],
+                    streak: stats['streak']
                 }))
             }
             
@@ -64,7 +75,7 @@ export const LoginStackNavigator = () => {
         getUserToken();
         setTimeout(() => {
             dispatch(setNotLoading());
-        }, 2000)
+        }, 1000)
     }, []);
 
     // console.log(userToken);

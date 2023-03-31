@@ -10,6 +10,8 @@ import NewAchievementModal from '../Modal/NewAchievementModal';
 import DatePicker from '../components/DatePicker';
 import Leaderboard from '../components/Leaderboard';
 import StreakIndicator from '../components/StreakIndicator';
+import OutlineButton from '../components/OutlineButton';
+import HomeCard from '../components/HomeCard';
 
 const screenHeight = Dimensions.get('window').height
 
@@ -17,10 +19,6 @@ const HomeScreen = () => {
     const userInfo = useAppSelector(state => state.userInfo);
 
     const [exposeModal, setExposeModal] = useState<boolean>(false);
-
-    const handleOnPress = () => {
-
-    }
 
     return ( 
         <View style={styles.container}>
@@ -43,16 +41,23 @@ const HomeScreen = () => {
                 <View style={styles.contentWrapper} >
                     <View style={styles.contentWide}>
                         {/* Streak indicator */}
-                        <StreakIndicator streak={8}/>
+                        <StreakIndicator streak={userInfo.streak}/>
                     </View>
                         <View style={styles.contentCardContainer}>
-                        <GradientButton text={'Add achievement'} onPress={() => setExposeModal(true)}
-                        />
+                            <HomeCard>
+                                <Text>Add Achievement</Text>
+                            </HomeCard>
+                            <HomeCard>
+                                <Text>Points</Text>
+                                <Text>Weekly: 10</Text>
+                                <Text>Monthly: 23</Text>
+                            </HomeCard>
                             {/* <FlatList data={data} renderItem={(item) => <HomeCard />} /> */}
                             {/* <HomeCard />
                             <HomeCard />
-                            <HomeCard /> */}
+                        <HomeCard /> */}
                         </View>
+                        <GradientButton text={'Add achievement'} onPress={() => setExposeModal(true)}/>
                 </View>
                 <View style={styles.lowerSpacer} />
             </ScrollView>

@@ -176,24 +176,24 @@ def db_points_in_last_week():
                 today = date.today()
                 seven_days = today - timedelta(days=7)
                 query = """SELECT userId, SUM(points) AS totalPoints, streak FROM activities WHERE activityDate <= %s AND activityDate > %s GROUP BY userId ORDER BY totalPoints DESC LIMIT 10"""
-
                 val_tuple = (today.strftime('%Y-%m-%d'), seven_days.strftime('%Y-%m-%d'))
+
                 with connection.cursor() as cursor:
                     cursor.execute(query, val_tuple)
                     result = cursor.fetchall()
-                    # print('result ', result)
-                    # userIds = (result[0][0], result[1][0])
                     userIds = []
                     for item in result:
                         userIds.append(item[0])
                     userIds = tuple(userIds)
                     users = db_get_user_info_batch(userIds, connection)
-                    # print('users ', users)
+                    # streaks = db_get_streaks_batch(userIds, connection)
+                    print('users ', users)
                     users_with_points = []
 
                     for item in result:
                         for i, user in enumerate(users):
                             if user[0] in item:
+                                print(user)
                                 if item[1] == None:
                                     value = 0
                                 else: value = item[1]
@@ -202,26 +202,8 @@ def db_points_in_last_week():
                                                           "lastName": user[2],
                                                           "location": user[3],
                                                           "points": value,
-                                                          "streak": item[2]})
-
-                    # for user in users:
-                    #     # print(user)
-                    #     for i, lst in enumerate(result):
-                    #         if lst[0] in user:
-                    #             print(lst)
-                    #             if lst[1] == None:
-                    #                 value = 0
-                    #             else: value = lst[1]
-                    #             users_with_points.append({"userId": user[0],
-                    #                                       "firstName": user[1],
-                    #                                       "lastName": user[2],
-                    #                                       "location": user[3],
-                    #                                       "points": value,
-                    #                                       "streak": lst[2]})
-                                # print(user)
+                                                          "streak": user[4]})
                                 break
-                    # for user in users:
-                    #     user.append
                     return users_with_points
     except Error as e:
         print(e)
@@ -246,15 +228,36 @@ def db_get_user_info_batch(userIds, connection):
                     users_with_streak.append((*user, lst[6]))
         return users_with_streak
     
-def db_connect():
-    with connect(
-        host='localhost',
-        user='root',
-        password = get_password(),
-        database='Achieve'
-    ) as connection:
 
-        return connection
+
+def db_get_stats(user_id):
+    today = date.today()
+    try:
+        with connect(
+            host='localhost',
+            user='root',
+            password = get_password(),
+            database='Achieve'
+        ) as connection:
+            query = """SELECT activityDate, streak, points FROM activities WHERE userId = %s
+                        AND activityDate <= %s AND activityDate > %s ORDER BY activityDate DESC"""
+            val_tuple = (user_id, today, today-timedelta(days=10))
+            # print(query)
+            with connection.cursor() as cursor:
+                cursor.execute(query, val_tuple)
+                result = cursor.fetchall()
+                total_points = 0
+                if result[0][0] < today - timedelta(days=1):
+                    streak = 0
+                else: streak = result[0][1]
+                # lastDate = result[0][0]
+                for item in result:
+                    total_points += item[2]
+                return streak, total_points
+
+    except Error as e:
+        print(e)
+
 
 if __name__ == "__main__":
 
@@ -268,6 +271,7 @@ if __name__ == "__main__":
             userId = 'dmk8kGtYv3U2VAig9QGU-'
             activityDate = date.today() - timedelta(days=12)
             result = db_points_in_last_week()
+            print(result)
             # print(result)
             # db_add_activity(userId, 'Test123', activityDate, 'firstGroup', '')
             # print(activityDate)

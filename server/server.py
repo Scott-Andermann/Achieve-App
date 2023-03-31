@@ -2,7 +2,7 @@ from flask import Flask, request
 from flask_cors import cross_origin
 import json
 from nanoid import generate
-from db_functions import add_user, check_login, db_add_activity, db_points_in_last_week, db_connect
+from db_functions import add_user, check_login, db_add_activity, db_points_in_last_week, db_get_stats
 from datetime import datetime
 
 
@@ -97,3 +97,13 @@ def leaderboard():
         "status": "ok",
         "data": response_data
     }
+
+@app.route('/current_stats')
+@cross_origin()
+def curren_stats():
+    args = request.args
+    print(args['userId'])
+    user_id = args['userId']
+    streak, total_points = db_get_stats(user_id)
+
+    return {"status": "success", "streak": streak, "totalPoints": total_points}

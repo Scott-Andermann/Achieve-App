@@ -66,6 +66,8 @@ export const userInfoSlicer = createSlice({
             state.lastName = action.payload.lastName;
             state.password = action.payload.password;
             state.location = action.payload.location;
+            state.points = action.payload.points;
+            state.streak = action.payload.streak;
         },
         clearPassword: (state) => {
             state.password = '';

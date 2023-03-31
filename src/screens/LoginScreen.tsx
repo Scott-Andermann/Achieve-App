@@ -40,7 +40,9 @@ const LoginScreen = ({ navigation }: { navigation: any }) => {
                 firstName: result['firstName'],
                 lastName: result['lastName'],
                 password: result['password'],
-                location: result['location']
+                location: result['location'],
+                streak: 0,
+                points: 0,
             }))
         }
     }
